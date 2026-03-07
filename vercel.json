@@ -2,13 +2,14 @@
   "builds": [
     {
       "src": "api/main.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb" }
+      "use": "@vercel/python"
     },
     {
       "src": "web/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
