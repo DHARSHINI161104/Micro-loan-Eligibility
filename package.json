@@ -1,8 +1,0 @@
-{
-  "name": "micro-loan-eligibility",
-  "version": "1.0.0",
-  "scripts": {
-    "install-api": "cd api && pip install -r requirements.txt",
-    "build-web": "cd web && npm install && npm run build"
-  }
-}
