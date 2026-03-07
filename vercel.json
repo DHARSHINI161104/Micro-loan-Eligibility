@@ -20,8 +20,5 @@
       "src": "/(.*)",
       "dest": "web/dist/$1"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri"
-  }
+  ]
 }
