@@ -5,6 +5,7 @@ from typing import List, Optional
 import os
 import uuid
 from datetime import datetime
+from urllib.parse import quote_plus
 
 from models import (
     UserCreate, UserResponse, FinancialDataCreate, ScoreResponse,
@@ -23,6 +24,10 @@ app.add_middleware(
 )
 
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+
+if MONGODB_URI.startswith("mongodb+srv://"):
+    MONGODB_URI = MONGODB_URI.replace("@", "%40")
+
 client = AsyncIOMotorClient(MONGODB_URI)
 db = client.microloan
 
