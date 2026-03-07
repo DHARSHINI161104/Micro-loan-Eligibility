@@ -13,8 +13,9 @@ services:
       - key: DATABASE_URL
         value: sqlite:///./gig_loan.db
 
-  - type: static
+  - type: web
     name: gig-loan-frontend
+    env: static
     region: oregon
     buildCommand: cd frontend && npm install && npm run build
     staticPublish: frontend/dist
