@@ -2,6 +2,7 @@ services:
   - type: web
     name: gig-loan-backend
     env: python
+    plan: free
     region: oregon
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
@@ -16,6 +17,7 @@ services:
   - type: web
     name: gig-loan-frontend
     env: static
+    plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
