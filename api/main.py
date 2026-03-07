@@ -5,7 +5,6 @@ from typing import List, Optional
 import os
 import uuid
 from datetime import datetime
-from urllib.parse import quote_plus
 
 from models import (
     UserCreate, UserResponse, FinancialDataCreate, ScoreResponse,
@@ -28,12 +27,15 @@ MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
 if MONGODB_URI.startswith("mongodb+srv://"):
     MONGODB_URI = MONGODB_URI.replace("@", "%40")
 
-client = AsyncIOMotorClient(MONGODB_URI)
-db = client.microloan
+client = None
+db = None
 
-users_collection = db.users
-financial_data_collection = db.financial_data
-score_history_collection = db.score_history
+def get_db():
+    global client, db
+    if client is None:
+        client = AsyncIOMotorClient(MONGODB_URI)
+        db = client.microloan
+    return db
 
 
 @app.get("/")
@@ -49,7 +51,7 @@ async def health_check():
 @app.post("/user/register", response_model=UserResponse)
 async def register_user(user: UserCreate):
     try:
-        existing_user = await users_collection.find_one({"phone": user.phone})
+        existing_user = await get_db().users.find_one({"phone": user.phone})
         if existing_user:
             return UserResponse(
                 user_id=str(existing_user["_id"]),
@@ -71,7 +73,7 @@ async def register_user(user: UserCreate):
             "updated_at": datetime.utcnow()
         }
         
-        result = await users_collection.insert_one(user_data)
+        result = await get_db().users.insert_one(user_data)
         
         return UserResponse(
             user_id=str(result.inserted_id),
@@ -96,14 +98,14 @@ async def save_financial_data(data: FinancialDataCreate):
             "created_at": datetime.utcnow()
         }
         
-        existing = await financial_data_collection.find_one({"user_id": data.user_id})
+        existing = await get_db().financial_data.find_one({"user_id": data.user_id})
         if existing:
-            await financial_data_collection.update_one(
+            await get_db().financial_data.update_one(
                 {"user_id": data.user_id},
                 {"$set": financial_record}
             )
         else:
-            await financial_data_collection.insert_one(financial_record)
+            await get_db().financial_data.insert_one(financial_record)
         
         score_result = calculate_score(
             data.earnings_history,
@@ -129,7 +131,7 @@ async def save_financial_data(data: FinancialDataCreate):
             "created_at": datetime.utcnow()
         }
         
-        await score_history_collection.insert_one(score_record)
+        await get_db().score_history.insert_one(score_record)
         
         return {
             "message": "Financial data saved and score calculated",
@@ -142,7 +144,7 @@ async def save_financial_data(data: FinancialDataCreate):
 @app.get("/user/score-history")
 async def get_score_history(user_id: str):
     try:
-        cursor = score_history_collection.find(
+        cursor = get_db().score_history.find(
             {"user_id": user_id}
         ).sort("created_at", -1).limit(20)
         
@@ -167,7 +169,7 @@ async def get_score_history(user_id: str):
 @app.get("/user/profile")
 async def get_profile(user_id: str):
     try:
-        user = await users_collection.find_one({"_id": uuid.UUID(user_id)})
+        user = await get_db().users.find_one({"_id": uuid.UUID(user_id)})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
