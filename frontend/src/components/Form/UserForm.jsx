@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { calculateScore, checkFraud } from '../services/api';
+import { calculateScore, checkFraud } from '../../services/api';
 
 const GIG_PLATFORMS = ['Swiggy', 'Ola', 'Urban Company', 'Zomato', 'Amazon Flex', 'Flipkart', 'Dunzo', 'Other'];
 const DIGITAL_LEVELS = ['Low', 'Medium', 'High'];
