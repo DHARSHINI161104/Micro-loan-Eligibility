@@ -359,7 +359,7 @@ const LoanProductsPage = () => {
   React.useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const res = await api.getLoanMatcher({ score: score?.score || 0, job_history: 1, monthly_expenses: 10000, emi: 0 });
+        const res = await api.getLoanMatcher({ score: score?.score || 0, jobHistory: 1, monthlyExpenses: 10000, emi: 0 });
         setProducts(res.matched_loans || []);
       } catch (e) { console.error(e); }
       setLoading(false);
