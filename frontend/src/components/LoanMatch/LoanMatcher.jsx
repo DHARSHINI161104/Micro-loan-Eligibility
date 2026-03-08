@@ -72,7 +72,10 @@ export default function LoanMatcher({ score, monthlyEarnings }) {
                     <span className="font-semibold text-slate-800">{loan.score_required}</span>
                   </div>
                 </div>
-                <button className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg transition text-sm">
+                <button 
+                  onClick={() => window.open('https://mudra.org.in', '_blank')}
+                  className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg transition text-sm"
+                >
                   Apply Now
                 </button>
               </div>
